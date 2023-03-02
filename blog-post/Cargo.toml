@@ -1,0 +1,15 @@
+[package]
+name = "blog-post"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+diesel = { version = "1.4.1", features = ["postgres", "64-column-tables", "chrono", "serde_json"] }
+diesel_cli = { version = "1.4.1", default-features = false, features = ["postgres"] }
+postgres = { version = "0.19.4", default-features = true }
+rocket = { version = "0.5.0-rc.2", features = ["json"] }
+rocket_dyn_templates = {version ="0.1.0-rc.1",features = ["tera"]}
+rocket_sync_db_pools = { version = "0.1.0-rc.2", features = ["diesel_postgres_pool"] }
+serde = { version = "1.0.140", default-features = true}
