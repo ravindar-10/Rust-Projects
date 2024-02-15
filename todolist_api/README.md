@@ -10,7 +10,7 @@ The TodoList API is a RESTful web service that provides endpoints for managing t
 1. Language: Rust
 2. Web Framework: Actix Web
 # Installation
-1. Clone the repository: git clone https://github.com/your/repository.git
+1. Clone the repository: git clone https://github.com/ravindar-10/Rust-Projects/tree/master/todolist_api
 2. Navigate to the project directory: cd todolist_api
 3. Install dependencies: cargo add actix-web ,cargo add serde --features derive , cargo add serde_json
 # Usage
