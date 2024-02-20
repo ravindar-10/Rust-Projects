@@ -18,7 +18,7 @@ Granthalaya is a web application built using Actix-Web framework in Rust. It pro
 3. Set up the environment variables by creating a .env file and adding the following configuration:
 DATABASE_URL=postgres://username:password@localhost/db_name
 # Install dependencies:
-1. Add Diesel as a dependency with PostgreSQL and r2d2 features:
+1. Add Diesel as a dependency with PostgreSQL and r2d2 features:  
 cargo add diesel --features "diesel/postgres,diesel/r2d2"
 2. Install the Diesel CLI with PostgreSQL support:
 cargo install diesel_cli --no-default-features --features postgres
