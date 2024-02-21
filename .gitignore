@@ -1,3 +1,7 @@
-*/target
-*/Cargo.lock
-
+*/target/
+*/*/target/
+*/*/*/target/
+*/.vscode/*
+*/*.lock
+*/*/*.lock
+*/*/*.lock
