@@ -1,0 +1,54 @@
+[package]
+name = "ironclad"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+path = "src/main.rs"
+name = "ironclad"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+actix-web = "4"
+tokio = { version = "1", features = ["macros", "rt-multi-thread","full"] }
+tracing-actix-web = "0.7"
+tracing = "0.1"
+actix-threadpool = "0.3.3"
+serde = { version = "1.0", features = ["derive"] }
+diesel = { version = "2.0.0", features = ["postgres", "r2d2", "chrono", "serde_json"] }
+diesel_migrations = "2.0.0"
+async-trait = "0.1.58"
+dotenv = { version = "0.15" }
+testcontainers = { version = "0.14.0" }
+env_logger = "0.10.0"
+log = "0.4"
+serde_json = "1.0"
+futures-util = "0.3.26"
+chrono = { version = "0.4.26", features = ["serde"] }
+rand = "0.8"
+hex = "0.4"
+num-traits = "0.2"
+validator = { version = "0.16.1", features = ["derive"] }
+utoipa = { version = "3.4.4", features = ["actix_extras", "chrono"] }
+utoipa-rapidoc = { version = "0.1.0", features = ["actix-web"] }
+utoipa-swagger-ui = { version = "3.1.5", features = ["actix-web"] }
+utoipa-redoc = { version = "0.1.0", features = ["actix-web"] }
+sha2 = "0.10.7"
+job_scheduler = "*"
+reqwest = "0.11"
+
+[dependencies.uuid]
+version = "1.6.1"
+features = [
+    "v4",                # Lets you generate random UUIDs
+    "fast-rng",          # Use a faster (but still sufficiently random) RNG
+    "macro-diagnostics", # Enable better diagnostics for compile-time UUIDs
+]
+
+[dev-dependencies]
+#reqwest = "0.11"
+reqwest = { version = "0.11", features = ["json"] }
