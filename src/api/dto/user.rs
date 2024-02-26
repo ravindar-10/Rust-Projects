@@ -46,7 +46,7 @@ pub struct CreateUserDTO {
 
 impl Into<CreateUser> for CreateUserDTO {
 	fn into(self) -> CreateUser {
-		CreateUser { email: self.email, first_name: self.first_name, last_name: self.last_name }
+		CreateUser { email: self.email, first_name: self.first_name, last_name: self.last_name ,uuid:None}
 	}
 }
 

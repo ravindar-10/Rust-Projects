@@ -1,5 +1,5 @@
 use crate::domain::models::account::DeleteAccount;
-use crate::domain::models::user::UpdateUser;
+use crate::domain::models::user::{UpdateUser};
 use crate::domain::models::{account::Account, event::CreateEvent};
 use crate::domain::repositories::event::EventRepository;
 use crate::{
@@ -30,6 +30,7 @@ use crate::{
 };
 use actix_web::Result;
 use async_trait::async_trait;
+use log::info;
 use serde_json::{from_value, json, Value};
 use std::{env, sync::Arc};
 #[derive(Clone)]
@@ -281,6 +282,7 @@ impl OrchestratorService for OrchestratorServiceImpl {
 		{
 			// First create the user
 			let data = transaction.transaction_data.clone();
+			info!("data: {:?}",data);
 			let mut user: CreateUser = from_value(data).unwrap();
 			let created_user: User = self.user_repository.create(&mut user).await.map_err(|e| -> CommonError { e.into() })?;
 

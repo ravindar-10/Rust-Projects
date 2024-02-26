@@ -15,6 +15,7 @@ pub struct UserDiesel {
 	pub last_name: String,
 	pub nonce: i32,
 	pub registration_date: chrono::NaiveDateTime,
+	pub uuid:String,
 }
 
 impl Into<User> for UserDiesel {
@@ -36,11 +37,15 @@ pub struct CreateUserDiesel {
 	pub email: String,
 	pub first_name: String,
 	pub last_name: String,
+	pub uuid:String,
 }
 
 impl From<CreateUser> for CreateUserDiesel {
 	fn from(u: CreateUser) -> Self {
-		CreateUserDiesel { email: u.email, first_name: u.first_name, last_name: u.last_name }
+		CreateUserDiesel { email: u.email, first_name: u.first_name, last_name: u.last_name ,uuid:match u.uuid{
+			Some(uuid)=>uuid,
+			None=>"NA".to_string(),
+		}}
 	}
 }
 

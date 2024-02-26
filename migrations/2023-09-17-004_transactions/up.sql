@@ -7,7 +7,8 @@ CREATE TABLE transactions
     transaction_hash    VARCHAR(64) UNIQUE NOT NULL,
     transaction_date    TIMESTAMP                   DEFAULT NOW() NOT NULL,
     block_number        INT REFERENCES blocks (block_number),
-    status              VARCHAR(42)        NOT NULL DEFAULT 'PENDING'
+    status              VARCHAR(42)        NOT NULL DEFAULT 'PENDING',
+    uuid        VARCHAR(128) NULL
 );
 
 CREATE INDEX idx_transaction_date ON transactions (transaction_date);

@@ -16,7 +16,16 @@ pub struct CreateUser {
 	pub email: String,
 	pub first_name: String,
 	pub last_name: String,
+	pub uuid:Option<String>,
 }
+
+// #[derive(Clone, Serialize, Deserialize, Debug)]
+//    pub struct UserWithUuid{
+// 	pub email: String,
+// 	pub first_name: String,
+// 	pub last_name: String,
+
+// }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct UpdateUser {

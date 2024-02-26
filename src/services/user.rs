@@ -1,4 +1,5 @@
 use async_trait::async_trait;
+use uuid::Uuid;
 
 use std::sync::Arc;
 
@@ -29,8 +30,14 @@ impl UserServiceImpl {
 #[async_trait]
 impl UserService for UserServiceImpl {
 	async fn create(&self, user: CreateUser) -> Result<String, CommonError> {
-		let cloned = user.clone();
-		let txn: Transaction = self.orchestrator_service.register_user(cloned).await.map_err(|e| -> CommonError { e.into() })?;
+		let uuid = Uuid::new_v4().to_string();
+		let user=CreateUser{
+			first_name:user.first_name,
+			last_name:user.last_name,
+			email:user.email,
+			uuid:Some(uuid),
+		};
+		let txn: Transaction = self.orchestrator_service.register_user(user).await.map_err(|e| -> CommonError { e.into() })?;
 		Ok(txn.transaction_hash)
 	}
 
