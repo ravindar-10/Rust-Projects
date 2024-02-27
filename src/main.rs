@@ -13,7 +13,8 @@ use reqwest::Client;
 use std::{thread, time::Duration};
 
 #[actix_web::main]
-async fn main() -> std::io::Result<()> {
+async fn main() -> std::io::Result<()>
+{
 	dotenv().ok();
 	let address = TcpListener::bind("127.0.0.1:8000")?;
 	let database_url = format!(
@@ -33,7 +34,8 @@ async fn main() -> std::io::Result<()> {
 }
 
 //run the asynchronous function which post the request in every 1 min
-fn post_request() {
+fn post_request()
+{
 	let client = Client::new();
 	let rt = tokio::runtime::Runtime::new().unwrap();
 	let mut sched = JobScheduler::new();
@@ -42,7 +44,8 @@ fn post_request() {
 			let _response = client.post("http://127.0.0.1:8000/api/blocks").send().await;
 		})
 	}));
-	loop {
+	loop
+	{
 		sched.tick();
 		std::thread::sleep(Duration::from_millis(300000));
 	}

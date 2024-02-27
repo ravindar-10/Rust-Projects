@@ -1,7 +1,7 @@
-use crate::api::dto::event::EventDTO;
-use crate::domain::error::ApiError;
-use crate::domain::models::event::CreateEvent;
-use crate::domain::services::event::EventService;
+use crate::{
+	api::dto::event::EventDTO,
+	domain::{error::ApiError, models::event::CreateEvent, services::event::EventService},
+};
 use actix_web::{web, Result};
 
 #[utoipa::path(

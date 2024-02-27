@@ -6,7 +6,8 @@ use crate::domain::{
 };
 
 #[async_trait]
-pub trait AccountRepository: Send + Sync {
+pub trait AccountRepository: Send + Sync
+{
 	async fn create(&self, account: &CreateAccount) -> RepositoryResult<Account>;
 	async fn read(&self, account_number: &str) -> RepositoryResult<Account>;
 	async fn update(&self, account_number: &str, account: &UpdateAccount) -> RepositoryResult<Account>;

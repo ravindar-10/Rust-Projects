@@ -10,14 +10,17 @@ use crate::domain::{
 use utoipa::ToSchema;
 
 #[derive(Deserialize, Serialize, ToSchema)]
-pub struct CreateTransactionDTO {
+pub struct CreateTransactionDTO
+{
 	pub user_id: i32,
 	pub transaction_type_str: String,
 	pub transaction_data: Value,
+	pub uuid: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
-pub struct TransactionDTO {
+pub struct TransactionDTO
+{
 	pub transaction_id: i32,
 	pub user_id: i32,
 	pub transaction_type_str: String,
@@ -28,8 +31,10 @@ pub struct TransactionDTO {
 	pub status: TransactionStatus,
 }
 
-impl Into<TransactionDTO> for Transaction {
-	fn into(self) -> TransactionDTO {
+impl Into<TransactionDTO> for Transaction
+{
+	fn into(self) -> TransactionDTO
+	{
 		TransactionDTO {
 			transaction_id: self.transaction_id,
 			user_id: self.user_id.unwrap(),
@@ -43,19 +48,24 @@ impl Into<TransactionDTO> for Transaction {
 	}
 }
 
-impl Into<CreateTransaction> for CreateTransactionDTO {
-	fn into(self) -> CreateTransaction {
+impl Into<CreateTransaction> for CreateTransactionDTO
+{
+	fn into(self) -> CreateTransaction
+	{
 		CreateTransaction {
 			user_id: self.user_id,
 			transaction_type: TransactionType::from_str(&self.transaction_type_str).unwrap(),
 			transaction_data: self.transaction_data,
 			transaction_hash: "".to_string(), // Hash to be computed at service layer
+			uuid: self.uuid,
 		}
 	}
 }
 
-impl Into<ResultPaging<TransactionDTO>> for ResultPaging<Transaction> {
-	fn into(self) -> ResultPaging<TransactionDTO> {
+impl Into<ResultPaging<TransactionDTO>> for ResultPaging<Transaction>
+{
+	fn into(self) -> ResultPaging<TransactionDTO>
+	{
 		ResultPaging { total: self.total, items: self.items.into_iter().map(|transaction| transaction.into()).collect() }
 	}
 }

@@ -7,7 +7,8 @@ use crate::domain::{
 };
 
 #[async_trait]
-pub trait BlockService: Sync + Send {
+pub trait BlockService: Sync + Send
+{
 	async fn create(&self) -> Result<Block, CommonError>;
 	async fn read(&self, block_number: i32) -> Result<Block, CommonError>;
 	async fn delete(&self, block_number: i32) -> Result<(), CommonError>;

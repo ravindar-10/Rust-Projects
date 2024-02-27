@@ -6,7 +6,8 @@ use crate::domain::{
 	repositories::{repository::ResultPaging, user::UserQueryParams},
 };
 #[async_trait]
-pub trait UserService: Sync + Send {
+pub trait UserService: Sync + Send
+{
 	async fn create(&self, user: CreateUser) -> Result<String, CommonError>;
 	async fn read(&self, id: i32) -> Result<User, CommonError>;
 	async fn read_by_email(&self, email: &str) -> Result<User, CommonError>;

@@ -12,7 +12,8 @@ pub type DBConn = PostgresPool;
 
 pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!();
 
-pub fn db_pool(database_url: &str) -> DBConn {
+pub fn db_pool(database_url: &str) -> DBConn
+{
 	dotenv().ok();
 	let pool_size_per_worker: u32 = env::var(POSTGRESQL_DB_POOL_SIZE_PER_WORKER)
 		.expect(&*format!("{value} must be set", value = POSTGRESQL_DB_POOL_SIZE_PER_WORKER))
@@ -22,6 +23,7 @@ pub fn db_pool(database_url: &str) -> DBConn {
 	Pool::builder().max_size(pool_size_per_worker).build(manager).expect("Should create pool")
 }
 
-pub fn run_migration(connection: &mut PgConnection) {
+pub fn run_migration(connection: &mut PgConnection)
+{
 	connection.run_pending_migrations(MIGRATIONS).unwrap();
 }

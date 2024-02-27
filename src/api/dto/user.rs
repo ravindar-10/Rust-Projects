@@ -8,7 +8,8 @@ use crate::domain::{
 	repositories::repository::ResultPaging,
 };
 #[derive(Debug, Clone, Validate, Serialize, Deserialize, ToSchema)]
-pub struct UserDTO {
+pub struct UserDTO
+{
 	pub user_id: i32,
 	pub email: String,
 	pub first_name: String,
@@ -16,8 +17,10 @@ pub struct UserDTO {
 	pub registration_date: chrono::NaiveDateTime,
 }
 
-impl Into<UserDTO> for User {
-	fn into(self) -> UserDTO {
+impl Into<UserDTO> for User
+{
+	fn into(self) -> UserDTO
+	{
 		UserDTO {
 			user_id: self.user_id,
 			email: self.email,
@@ -28,14 +31,17 @@ impl Into<UserDTO> for User {
 	}
 }
 
-impl Into<ResultPaging<UserDTO>> for ResultPaging<User> {
-	fn into(self) -> ResultPaging<UserDTO> {
+impl Into<ResultPaging<UserDTO>> for ResultPaging<User>
+{
+	fn into(self) -> ResultPaging<UserDTO>
+	{
 		ResultPaging { total: self.total, items: self.items.into_iter().map(|user| user.into()).collect() }
 	}
 }
 
 #[derive(Debug, Clone, Validate, Serialize, Deserialize, ToSchema)]
-pub struct CreateUserDTO {
+pub struct CreateUserDTO
+{
 	#[validate(email)]
 	pub email: String,
 	#[validate(length(min = 1), length(max = 100))]
@@ -44,14 +50,17 @@ pub struct CreateUserDTO {
 	pub last_name: String,
 }
 
-impl Into<CreateUser> for CreateUserDTO {
-	fn into(self) -> CreateUser {
-		CreateUser { email: self.email, first_name: self.first_name, last_name: self.last_name ,uuid:None}
+impl Into<CreateUser> for CreateUserDTO
+{
+	fn into(self) -> CreateUser
+	{
+		CreateUser { email: self.email, first_name: self.first_name, last_name: self.last_name, uuid: None }
 	}
 }
 
 #[derive(Debug, Clone, Validate, Serialize, Deserialize, ToSchema)]
-pub struct UpdateUserDTO {
+pub struct UpdateUserDTO
+{
 	pub email: String,
 	#[validate(length(min = 1), length(max = 100))]
 	pub first_name: Option<String>,
@@ -59,8 +68,10 @@ pub struct UpdateUserDTO {
 	pub last_name: Option<String>,
 }
 
-impl Into<UpdateUser> for UpdateUserDTO {
-	fn into(self) -> UpdateUser {
+impl Into<UpdateUser> for UpdateUserDTO
+{
+	fn into(self) -> UpdateUser
+	{
 		UpdateUser { email: self.email, first_name: self.first_name, last_name: self.last_name }
 	}
 }

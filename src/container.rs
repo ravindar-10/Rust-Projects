@@ -5,28 +5,31 @@ use diesel::{
 	PgConnection,
 };
 
-use crate::domain::repositories::event::EventRepository;
-use crate::domain::services::event::EventService;
-use crate::infrastructure::repositories::event::EventDieselRepository;
-use crate::services::event::EventServiceImpl;
 use crate::{
 	domain::{
-		repositories::{account::AccountRepository, block::BlockRepository, transaction::TransactionRepository, user::UserRepository},
-		services::{account::AccountService, block::BlockService, orchestrator::OrchestratorService, transaction::TransactionService, user::UserService},
+		repositories::{
+			account::AccountRepository, block::BlockRepository, event::EventRepository, transaction::TransactionRepository, user::UserRepository,
+		},
+		services::{
+			account::AccountService, block::BlockService, event::EventService, orchestrator::OrchestratorService, transaction::TransactionService,
+			user::UserService,
+		},
 	},
 	infrastructure::{
 		databases::pgsql::run_migration,
 		repositories::{
-			account::AccountDieselRepository, block::BlockDieselRepository, transaction::TransactionDieselRepository, user::UserDieselRepository,
+			account::AccountDieselRepository, block::BlockDieselRepository, event::EventDieselRepository, transaction::TransactionDieselRepository,
+			user::UserDieselRepository,
 		},
 	},
 	services::{
-		account::AccountServiceImpl, block::BlockServiceImpl, orchestrator::OrchestratorServiceImpl, transaction::TransactionServiceImpl,
-		user::UserServiceImpl,
+		account::AccountServiceImpl, block::BlockServiceImpl, event::EventServiceImpl, orchestrator::OrchestratorServiceImpl,
+		transaction::TransactionServiceImpl, user::UserServiceImpl,
 	},
 };
 
-pub struct Container {
+pub struct Container
+{
 	pub orchestrator_service: Arc<dyn OrchestratorService>,
 	pub user_service: Arc<dyn UserService>,
 	pub block_service: Arc<dyn BlockService>,
@@ -35,8 +38,10 @@ pub struct Container {
 	pub event_service: Arc<dyn EventService>,
 }
 
-impl Container {
-	pub fn new(db_pool: Arc<Pool<ConnectionManager<PgConnection>>>) -> Self {
+impl Container
+{
+	pub fn new(db_pool: Arc<Pool<ConnectionManager<PgConnection>>>) -> Self
+	{
 		let mut connection = db_pool.get().expect("Could not fetch connection from pool");
 		run_migration(&mut connection);
 		let user_repository: Arc<dyn UserRepository> = Arc::new(UserDieselRepository::new(Arc::clone(&db_pool)));

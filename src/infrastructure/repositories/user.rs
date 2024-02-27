@@ -19,19 +19,24 @@ use crate::{
 	},
 };
 
-pub struct UserDieselRepository {
+pub struct UserDieselRepository
+{
 	pub pool: Arc<DBConn>,
 }
 
-impl UserDieselRepository {
-	pub fn new(db: Arc<DBConn>) -> Self {
+impl UserDieselRepository
+{
+	pub fn new(db: Arc<DBConn>) -> Self
+	{
 		UserDieselRepository { pool: db }
 	}
 }
 
 #[async_trait]
-impl UserRepository for UserDieselRepository {
-	async fn create(&self, user: &CreateUser) -> RepositoryResult<User> {
+impl UserRepository for UserDieselRepository
+{
+	async fn create(&self, user: &CreateUser) -> RepositoryResult<User>
+	{
 		use crate::infrastructure::schema::users::dsl::*;
 		let new_user_diesel: CreateUserDiesel = CreateUserDiesel::from(user.clone());
 		let mut conn = self.pool.get().unwrap();
@@ -42,7 +47,8 @@ impl UserRepository for UserDieselRepository {
 		Ok(result.into())
 	}
 
-	async fn read(&self, id: i32) -> RepositoryResult<User> {
+	async fn read(&self, id: i32) -> RepositoryResult<User>
+	{
 		use crate::infrastructure::schema::users::dsl::*;
 		let mut conn = self.pool.get().unwrap();
 		users
@@ -52,7 +58,8 @@ impl UserRepository for UserDieselRepository {
 			.map(|v| -> User { v.into() })
 	}
 
-	async fn read_by_email(&self, user_email: &str) -> RepositoryResult<User> {
+	async fn read_by_email(&self, user_email: &str) -> RepositoryResult<User>
+	{
 		use crate::infrastructure::schema::users::dsl::*;
 		let mut conn = self.pool.get().unwrap();
 		users
@@ -62,20 +69,23 @@ impl UserRepository for UserDieselRepository {
 			.map(|v| -> User { v.into() })
 	}
 
-	async fn update(&self, user_email: &str, user: &UpdateUser) -> RepositoryResult<User> {
+	async fn update(&self, user_email: &str, user: &UpdateUser) -> RepositoryResult<User>
+	{
 		use crate::infrastructure::schema::users::dsl::*;
 		let mut conn = self.pool.get().unwrap();
 		let update_user_diesel: UpdateUserDiesel = UpdateUserDiesel::from(user.clone());
 		let result = diesel::update(users.filter(email.eq(user_email)))
 			.set(&update_user_diesel)
 			.get_result::<UserDiesel>(&mut conn);
-		match result {
+		match result
+		{
 			Ok(result) => Ok(result.into()), // Extract value and convert if needed
 			Err(_error) => Err(RepositoryError { message: "Result not found".to_string() }),
 		}
 	}
 
-	async fn increment_nonce(&self, user_email: &str) -> RepositoryResult<()> {
+	async fn increment_nonce(&self, user_email: &str) -> RepositoryResult<()>
+	{
 		use crate::infrastructure::schema::users::dsl::*;
 		let mut conn = self.pool.get().unwrap();
 		diesel::update(users.filter(email.eq(user_email)))
@@ -85,7 +95,8 @@ impl UserRepository for UserDieselRepository {
 		Ok(())
 	}
 
-	async fn delete(&self, user_email: &str) -> RepositoryResult<()> {
+	async fn delete(&self, user_email: &str) -> RepositoryResult<()>
+	{
 		use crate::infrastructure::schema::users::dsl::{email, users};
 		let mut conn = self.pool.get().unwrap();
 		diesel::delete(users)
@@ -95,7 +106,8 @@ impl UserRepository for UserDieselRepository {
 		Ok(())
 	}
 
-	async fn list(&self, params: UserQueryParams) -> RepositoryResult<ResultPaging<User>> {
+	async fn list(&self, params: UserQueryParams) -> RepositoryResult<ResultPaging<User>>
+	{
 		use crate::infrastructure::schema::users::dsl::users;
 		let mut conn = self.pool.get().unwrap();
 		let builder = users.limit(params.limit()).offset(params.offset());

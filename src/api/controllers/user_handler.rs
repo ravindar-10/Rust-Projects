@@ -21,7 +21,8 @@ use actix_web::{web, HttpResponse, Result};
         (status = 429, description = "Too Many Requests"),
     )
 )]
-pub async fn create_user(user_service: web::Data<dyn UserService>, post_data: web::Json<CreateUserDTO>) -> Result<String, ApiError> {
+pub async fn create_user(user_service: web::Data<dyn UserService>, post_data: web::Json<CreateUserDTO>) -> Result<String, ApiError>
+{
 	let user = user_service.create(post_data.into_inner().into()).await?;
 	Ok(user.into())
 }
@@ -41,7 +42,8 @@ pub async fn create_user(user_service: web::Data<dyn UserService>, post_data: we
         (status = 429, description = "Too Many Requests"),
     )
 )]
-pub async fn read_user(user_service: web::Data<dyn UserService>, email: web::Path<String>) -> Result<web::Json<UserDTO>, ApiError> {
+pub async fn read_user(user_service: web::Data<dyn UserService>, email: web::Path<String>) -> Result<web::Json<UserDTO>, ApiError>
+{
 	let user = user_service.read_by_email(&email.into_inner()).await?;
 	Ok(web::Json(user.into()))
 }
@@ -64,7 +66,8 @@ pub async fn read_user(user_service: web::Data<dyn UserService>, email: web::Pat
 )]
 pub async fn update_user(
 	user_service: web::Data<dyn UserService>, email: web::Path<String>, post_data: web::Json<UpdateUserDTO>,
-) -> Result<String, ApiError> {
+) -> Result<String, ApiError>
+{
 	let user = user_service.update(&email.into_inner(), post_data.into_inner().into()).await?;
 	Ok(user.into())
 }
@@ -84,7 +87,8 @@ pub async fn update_user(
         (status = 429, description = "Too Many Requests"),
     )
 )]
-pub async fn delete_user(user_service: web::Data<dyn UserService>, params: web::Path<String>) -> Result<HttpResponse, ApiError> {
+pub async fn delete_user(user_service: web::Data<dyn UserService>, params: web::Path<String>) -> Result<HttpResponse, ApiError>
+{
 	user_service.delete(&params.into_inner()).await?;
 	Ok(HttpResponse::NoContent().finish())
 }
@@ -103,7 +107,8 @@ pub async fn delete_user(user_service: web::Data<dyn UserService>, params: web::
 )]
 pub async fn list_users(
 	user_service: web::Data<dyn UserService>, params: web::Query<UserQueryParams>,
-) -> Result<web::Json<ResultPaging<UserDTO>>, ApiError> {
+) -> Result<web::Json<ResultPaging<UserDTO>>, ApiError>
+{
 	let selection = user_service.list(params.into_inner()).await?;
 	Ok(web::Json(selection.into()))
 }

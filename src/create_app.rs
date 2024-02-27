@@ -14,11 +14,11 @@ use utoipa_rapidoc::RapiDoc;
 use utoipa_redoc::{Redoc, Servable};
 use utoipa_swagger_ui::SwaggerUi;
 
-use crate::api::controllers::{account_handler::delete_account, event_handler::create_event};
 use crate::{
 	api::controllers::{
-		account_handler::read_account,
+		account_handler::{delete_account, read_account},
 		block_handler::{create_block, list_blocks, read_block},
+		event_handler::create_event,
 		health_check::health_check,
 		transaction_handler::{create_transaction, list_transactions, read_transaction},
 		user_handler::{create_user, delete_user, list_users, read_user, update_user},
@@ -29,7 +29,8 @@ use crate::{
 
 pub fn create_app(
 	db_pool: Arc<Pool<ConnectionManager<PgConnection>>>,
-) -> App<impl ServiceFactory<ServiceRequest, Response = ServiceResponse<impl MessageBody>, Config = (), InitError = (), Error = Error>> {
+) -> App<impl ServiceFactory<ServiceRequest, Response = ServiceResponse<impl MessageBody>, Config = (), InitError = (), Error = Error>>
+{
 	let container = Container::new(db_pool);
 	let openapi = ApiDoc::openapi();
 	let user_service = container.user_service.clone();

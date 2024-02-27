@@ -1,23 +1,21 @@
-use crate::domain::models::account::DeleteAccount;
-use crate::domain::models::user::{UpdateUser};
-use crate::domain::models::{account::Account, event::CreateEvent};
-use crate::domain::repositories::event::EventRepository;
 use crate::{
 	domain::{
 		constants::TRANSACTIONS_PER_BLOCK,
 		error::CommonError,
 		models::{
-			account::{CreateAccount, UpdateAccount},
+			account::{Account, CreateAccount, DeleteAccount, UpdateAccount},
 			block::{Block, CreateBlock},
+			event::CreateEvent,
 			transaction::{
 				deposit::DepositTransaction, status::TransactionStatus, transfer::TransferTransaction, txn_type::TransactionType,
 				withdrawal::WithdrawalTransaction, CreateTransaction, Transaction, UpdateTransaction,
 			},
-			user::{CreateUser, User},
+			user::{CreateUser, UpdateUser, User},
 		},
 		repositories::{
 			account::AccountRepository,
 			block::BlockRepository,
+			event::EventRepository,
 			transaction::{TransactionQueryParams, TransactionRepository},
 			user::UserRepository,
 		},
@@ -34,7 +32,8 @@ use log::info;
 use serde_json::{from_value, json, Value};
 use std::{env, sync::Arc};
 #[derive(Clone)]
-pub struct OrchestratorServiceImpl {
+pub struct OrchestratorServiceImpl
+{
 	pub user_repository: Arc<dyn UserRepository>,
 	pub account_repository: Arc<dyn AccountRepository>,
 	pub txn_repository: Arc<dyn TransactionRepository>,
@@ -42,11 +41,13 @@ pub struct OrchestratorServiceImpl {
 	pub event_repository: Arc<dyn EventRepository>,
 }
 
-impl OrchestratorServiceImpl {
+impl OrchestratorServiceImpl
+{
 	pub fn new(
 		user_repository: Arc<dyn UserRepository>, account_repository: Arc<dyn AccountRepository>, txn_repository: Arc<dyn TransactionRepository>,
 		block_repository: Arc<dyn BlockRepository>, event_repository: Arc<dyn EventRepository>,
-	) -> Self {
+	) -> Self
+	{
 		OrchestratorServiceImpl { user_repository, account_repository, txn_repository, block_repository, event_repository }
 	}
 
@@ -56,12 +57,14 @@ impl OrchestratorServiceImpl {
 	 * @param txn_hash String
 	 * @return bool
 	 */
-	async fn deposit(&self, deposit_txn: DepositTransaction, txn_hash: String) -> Result<bool, CommonError> {
+	async fn deposit(&self, deposit_txn: DepositTransaction, txn_hash: String) -> Result<bool, CommonError>
+	{
 		let to_account_number: &str = &deposit_txn.to_account_number;
 		let amount: f64 = deposit_txn.amount;
 		let recipient_account_result = self.account_repository.read(to_account_number).await.map_err(|e| -> CommonError { e.into() });
 
-		let recipient_account: Account = match recipient_account_result {
+		let recipient_account: Account = match recipient_account_result
+		{
 			Ok(recipient_account) => recipient_account, // Extract value and convert if needed
 			Err(_error) => return Ok(false),
 		};
@@ -71,7 +74,8 @@ impl OrchestratorServiceImpl {
 			.update(to_account_number, &updated_account)
 			.await
 			.map_err(|e| -> CommonError { e.into() });
-		match update_result {
+		match update_result
+		{
 			Ok(_recipient_account) => Ok(true), // Extract value and convert if needed
 			Err(_error) => return Ok(false),
 		}
@@ -83,42 +87,46 @@ impl OrchestratorServiceImpl {
 	 * @param txn_hash String
 	 * @return bool
 	 */
-	async fn withdrawal(&self, withdrawal_txn: WithdrawalTransaction, txn_hash: String) -> Result<bool, CommonError> {
+	async fn withdrawal(&self, withdrawal_txn: WithdrawalTransaction, txn_hash: String) -> Result<bool, CommonError>
+	{
 		let from_account_number: &str = &withdrawal_txn.from_account_number;
 		let amount: f64 = withdrawal_txn.amount;
 		let source_account_result = self.account_repository.read(from_account_number).await.map_err(|e| -> CommonError { e.into() });
-		let source_account: Account = match source_account_result {
+		let source_account: Account = match source_account_result
+		{
 			Ok(source_account) => source_account, // Extract value and convert if needed
 			Err(_error) => return Ok(false),
 		};
-		// if from_account_number==source_account.account_number{
-		// 	return Ok(false)
-		// }
-		// Check if source account has sufficient balance
-		if source_account.balance >= amount {
+		if source_account.balance >= amount
+		{
 			let updated_account = UpdateAccount { latest_transaction_hash: txn_hash.clone(), balance: Some(source_account.balance - amount) };
 			let update_result = self
 				.account_repository
 				.update(from_account_number, &updated_account)
 				.await
 				.map_err(|e| -> CommonError { e.into() });
-			match update_result {
+			match update_result
+			{
 				Ok(_recipient_account) => Ok(true), // Extract value and convert if needed
 				Err(_error) => return Ok(false),
 			}
-		} else {
+		}
+		else
+		{
 			Ok(false)
 		}
 	}
 }
 
 #[async_trait]
-impl OrchestratorService for OrchestratorServiceImpl {
+impl OrchestratorService for OrchestratorServiceImpl
+{
 	/**
 	 * Mines a block and executes the transactions within the block.
 	 * @return Block
 	 */
-	async fn mine_block(&self) -> Result<Block, CommonError> {
+	async fn mine_block(&self) -> Result<Block, CommonError>
+	{
 		let transactions_per_block: i32 = env::var(TRANSACTIONS_PER_BLOCK)
 			.expect(&*format!("{value} must be set", value = TRANSACTIONS_PER_BLOCK))
 			.parse()
@@ -129,11 +137,13 @@ impl OrchestratorService for OrchestratorServiceImpl {
 			status: Some(TransactionStatus::PENDING.to_string()),
 		};
 		let pending_transactions = self.txn_repository.list(transaction_query_params).await.map_err(|e| -> CommonError { e.into() })?;
-		if pending_transactions.items.is_empty() {
+		if pending_transactions.items.is_empty()
+		{
 			return Ok(Default::default()); // Or any other appropriate value for an empty block
 		}
 		let mut transaction_hashes: Vec<String> = Vec::new();
-		for transaction in &pending_transactions.items {
+		for transaction in &pending_transactions.items
+		{
 			transaction_hashes.push(transaction.transaction_hash.clone());
 		}
 		let transaction_hashes_string = generate_hash_from_vector(&transaction_hashes);
@@ -143,7 +153,8 @@ impl OrchestratorService for OrchestratorServiceImpl {
 		};
 		let created_block = self.block_repository.create(&mut new_block).await.map_err(|e| -> CommonError { e.into() })?;
 		// Execute the transactions
-		for txn in pending_transactions.items {
+		for txn in pending_transactions.items
+		{
 			self.execute_transaction(created_block.block_number, txn.clone()).await?;
 		}
 		Ok(created_block)
@@ -154,13 +165,15 @@ impl OrchestratorService for OrchestratorServiceImpl {
 	 * @param user
 	 * @return Transaction
 	 */
-	async fn register_user(&self, user: CreateUser) -> Result<Transaction, CommonError> {
+	async fn register_user(&self, user: CreateUser) -> Result<Transaction, CommonError>
+	{
 		let json_data = serde_json::to_value(&user).unwrap();
 		let txn = CreateTransaction {
 			user_id: 1,                                     // Root user's id
 			transaction_type: TransactionType::AccountOpen, // txn type for Account_Open
 			transaction_data: json_data.clone(),
 			transaction_hash: generate_hash(&json_data), // one way sha256 hash
+			uuid: user.uuid,
 		};
 		self.txn_repository.create(&txn).await.map_err(|e| -> CommonError { e.into() })
 	}
@@ -170,13 +183,15 @@ impl OrchestratorService for OrchestratorServiceImpl {
 	 * @param user
 	 * @return Transaction
 	 */
-	async fn update_user(&self, _email: &str, user: UpdateUser) -> Result<Transaction, CommonError> {
+	async fn update_user(&self, _email: &str, user: UpdateUser) -> Result<Transaction, CommonError>
+	{
 		let json_data = serde_json::to_value(&user).unwrap();
 		let txn = CreateTransaction {
 			user_id: 1,                                       // Root user's id
 			transaction_type: TransactionType::AccountUpdate, // txn type for Account_Open
 			transaction_data: json_data.clone(),
 			transaction_hash: generate_hash(&json_data), // one way sha256 hash
+			uuid: None,
 		};
 		self.txn_repository.create(&txn).await.map_err(|e| -> CommonError { e.into() })
 	}
@@ -186,13 +201,15 @@ impl OrchestratorService for OrchestratorServiceImpl {
 	 * @param user
 	 * @return Transaction
 	 */
-	async fn delete_account(&self, delete_account: DeleteAccount) -> Result<Transaction, CommonError> {
+	async fn delete_account(&self, delete_account: DeleteAccount) -> Result<Transaction, CommonError>
+	{
 		let json_data = serde_json::to_value(&delete_account).unwrap();
 		let txn = CreateTransaction {
 			user_id: 1,                                      // Root user's id
 			transaction_type: TransactionType::AccountClose, // txn type for Account_Close
 			transaction_data: json_data.clone(),
 			transaction_hash: generate_hash(&json_data), // one way sha256 hash
+			uuid: None,
 		};
 		self.txn_repository.create(&txn).await.map_err(|e| -> CommonError { e.into() })
 	}
@@ -201,7 +218,8 @@ impl OrchestratorService for OrchestratorServiceImpl {
 	 * @param transaction
 	 * @return String
 	 */
-	async fn create_transaction_hash(&self, transaction: CreateTransaction) -> Result<String, CommonError> {
+	async fn create_transaction_hash(&self, transaction: CreateTransaction) -> Result<String, CommonError>
+	{
 		// First find the latest nonce for the user and increment it
 		let user_id = transaction.user_id;
 		let user = self.user_repository.read(user_id).await.map_err(|e| -> CommonError { e.into() })?;
@@ -218,7 +236,8 @@ impl OrchestratorService for OrchestratorServiceImpl {
 		let json_data = serde_json::to_value(&transaction.transaction_data).unwrap();
 		let mut merged_json_data = json_data.as_object().cloned().unwrap_or_default();
 
-		for (key, value) in additional_fields.as_object().unwrap().iter() {
+		for (key, value) in additional_fields.as_object().unwrap().iter()
+		{
 			merged_json_data.insert(key.to_string(), value.clone());
 		}
 
@@ -233,7 +252,8 @@ impl OrchestratorService for OrchestratorServiceImpl {
 	 * @param transaction
 	 * @return Transaction
 	 */
-	async fn execute_transaction(&self, block_number: i32, transaction: Transaction) -> Result<Transaction, CommonError> {
+	async fn execute_transaction(&self, block_number: i32, transaction: Transaction) -> Result<Transaction, CommonError>
+	{
 		let mut txn_status = TransactionStatus::FAILED;
 		let txn_hash = transaction.transaction_hash.clone();
 		let transaction_type = transaction.transaction_type;
@@ -243,22 +263,30 @@ impl OrchestratorService for OrchestratorServiceImpl {
 		{
 			let deposit_txn: DepositTransaction = data.clone().into();
 			let result: bool = self.deposit(deposit_txn, txn_hash.clone()).await.map_err(|e| -> CommonError { e.into() })?;
-			if result {
+			if result
+			{
 				txn_status = TransactionStatus::SUCCESS;
-			} else {
+			}
+			else
+			{
 				txn_status = TransactionStatus::FAILED;
 			}
-		} else if let TransactionType::Withdrawal = transaction_type
+		}
+		else if let TransactionType::Withdrawal = transaction_type
 		//Withdrawal
 		{
 			let withdrawal_txn: WithdrawalTransaction = data.clone().into();
 			let result: bool = self.withdrawal(withdrawal_txn, txn_hash.clone()).await.map_err(|e| -> CommonError { e.into() })?;
-			if result {
+			if result
+			{
 				txn_status = TransactionStatus::SUCCESS;
-			} else {
+			}
+			else
+			{
 				txn_status = TransactionStatus::FAILED;
 			}
-		} else if let TransactionType::Transfer = transaction_type
+		}
+		else if let TransactionType::Transfer = transaction_type
 		//Transfer
 		{
 			let transfer_txn: TransferTransaction = data.clone().into();
@@ -267,22 +295,29 @@ impl OrchestratorService for OrchestratorServiceImpl {
 			let deposit_txn: DepositTransaction =
 				DepositTransaction { to_account_number: transfer_txn.to_account_number.clone(), amount: transfer_txn.amount };
 			let withdrawal_result: bool = self.withdrawal(withdrawal_txn, txn_hash.clone()).await.map_err(|e| -> CommonError { e.into() })?;
-			if withdrawal_result {
+			if withdrawal_result
+			{
 				let deposit_result: bool = self.deposit(deposit_txn, txn_hash.clone()).await.map_err(|e| -> CommonError { e.into() })?;
-				if deposit_result {
+				if deposit_result
+				{
 					txn_status = TransactionStatus::SUCCESS;
-				} else {
+				}
+				else
+				{
 					txn_status = TransactionStatus::FAILED;
 				}
-			} else {
+			}
+			else
+			{
 				txn_status = TransactionStatus::FAILED;
 			}
-		} else if let TransactionType::AccountOpen = transaction_type
+		}
+		else if let TransactionType::AccountOpen = transaction_type
 		// Account_Open
 		{
 			// First create the user
 			let data = transaction.transaction_data.clone();
-			info!("data: {:?}",data);
+			info!("data: {:?}", data);
 			let mut user: CreateUser = from_value(data).unwrap();
 			let created_user: User = self.user_repository.create(&mut user).await.map_err(|e| -> CommonError { e.into() })?;
 
@@ -295,7 +330,8 @@ impl OrchestratorService for OrchestratorServiceImpl {
 			};
 			self.account_repository.create(&account).await.map_err(|e| -> CommonError { e.into() })?;
 			txn_status = TransactionStatus::SUCCESS;
-		} else if let TransactionType::AccountUpdate = transaction_type
+		}
+		else if let TransactionType::AccountUpdate = transaction_type
 		// Account_Update
 		{
 			let data = transaction.transaction_data.clone();
@@ -308,15 +344,19 @@ impl OrchestratorService for OrchestratorServiceImpl {
 				.await
 				.map_err(|e| -> CommonError { e.into() });
 
-			match user_update_result {
-				Ok(_updated_user) => {
+			match user_update_result
+			{
+				Ok(_updated_user) =>
+				{
 					txn_status = TransactionStatus::SUCCESS;
 				}
-				Err(_error) => {
+				Err(_error) =>
+				{
 					txn_status = TransactionStatus::FAILED;
 				}
 			};
-		} else if let TransactionType::AccountClose = transaction_type
+		}
+		else if let TransactionType::AccountClose = transaction_type
 		// Account_Close
 		{
 			let data = transaction.transaction_data.clone();
@@ -328,11 +368,14 @@ impl OrchestratorService for OrchestratorServiceImpl {
 				.await
 				.map_err(|e| -> CommonError { e.into() });
 
-			match user_account_close {
-				Ok(_updated_user) => {
+			match user_account_close
+			{
+				Ok(_updated_user) =>
+				{
 					txn_status = TransactionStatus::SUCCESS;
 				}
-				Err(_error) => {
+				Err(_error) =>
+				{
 					txn_status = TransactionStatus::FAILED;
 				}
 			};

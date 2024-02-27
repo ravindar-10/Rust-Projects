@@ -9,6 +9,7 @@ use actix_web::HttpResponse;
         (status = 503, description = "Service Unavailable"),
     )
 )]
-pub async fn health_check() -> HttpResponse {
+pub async fn health_check() -> HttpResponse
+{
 	HttpResponse::Ok().finish()
 }

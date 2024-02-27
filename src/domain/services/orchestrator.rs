@@ -11,7 +11,8 @@ use crate::domain::{
 };
 
 #[async_trait]
-pub trait OrchestratorService: Sync + Send {
+pub trait OrchestratorService: Sync + Send
+{
 	async fn mine_block(&self) -> Result<Block, CommonError>;
 	async fn register_user(&self, user: CreateUser) -> Result<Transaction, CommonError>;
 	async fn create_transaction_hash(&self, transaction: CreateTransaction) -> Result<String, CommonError>;

@@ -17,19 +17,24 @@ use crate::{
 };
 use std::sync::Arc;
 
-pub struct TransactionDieselRepository {
+pub struct TransactionDieselRepository
+{
 	pub pool: Arc<DBConn>,
 }
 
-impl TransactionDieselRepository {
-	pub fn new(db: Arc<DBConn>) -> Self {
+impl TransactionDieselRepository
+{
+	pub fn new(db: Arc<DBConn>) -> Self
+	{
 		TransactionDieselRepository { pool: db }
 	}
 }
 
 #[async_trait]
-impl TransactionRepository for TransactionDieselRepository {
-	async fn create(&self, txn: &CreateTransaction) -> RepositoryResult<Transaction> {
+impl TransactionRepository for TransactionDieselRepository
+{
+	async fn create(&self, txn: &CreateTransaction) -> RepositoryResult<Transaction>
+	{
 		use crate::infrastructure::schema::transactions::dsl::transactions;
 		let mut conn = self.pool.get().unwrap();
 		let new_transaction_diesel: CreateTransactionDiesel = CreateTransactionDiesel::from(txn.clone());
@@ -40,7 +45,8 @@ impl TransactionRepository for TransactionDieselRepository {
 		Ok(result.into())
 	}
 
-	async fn read(&self, txn_hash: &str) -> RepositoryResult<Transaction> {
+	async fn read(&self, txn_hash: &str) -> RepositoryResult<Transaction>
+	{
 		use crate::infrastructure::schema::transactions::dsl::{transaction_hash, transactions};
 		let mut conn = self.pool.get().unwrap();
 		transactions
@@ -50,7 +56,8 @@ impl TransactionRepository for TransactionDieselRepository {
 			.map(|v| -> Transaction { v.into() })
 	}
 
-	async fn update(&self, txn_hash: &str, txn: UpdateTransaction) -> RepositoryResult<Transaction> {
+	async fn update(&self, txn_hash: &str, txn: UpdateTransaction) -> RepositoryResult<Transaction>
+	{
 		use crate::infrastructure::schema::transactions::dsl::{transaction_hash, transactions};
 		let update_transaction_diesel = UpdateTransactionDiesel::from(txn);
 		let mut conn = self.pool.get().unwrap();
@@ -61,7 +68,8 @@ impl TransactionRepository for TransactionDieselRepository {
 		Ok(updated_transaction.into())
 	}
 
-	async fn list(&self, params: TransactionQueryParams) -> RepositoryResult<ResultPaging<Transaction>> {
+	async fn list(&self, params: TransactionQueryParams) -> RepositoryResult<ResultPaging<Transaction>>
+	{
 		use crate::infrastructure::schema::transactions::dsl::{status, transactions};
 		let mut conn = self.pool.get().unwrap();
 		let builder = transactions

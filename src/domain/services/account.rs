@@ -6,7 +6,8 @@ use crate::domain::{
 };
 
 #[async_trait]
-pub trait AccountService: Sync + Send {
+pub trait AccountService: Sync + Send
+{
 	async fn read(&self, account_number: &str) -> Result<Account, CommonError>;
 	async fn delete(&self, account_number: &str, delete_account: DeleteAccount) -> Result<String, CommonError>;
 }

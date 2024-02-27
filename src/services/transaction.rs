@@ -16,20 +16,25 @@ use crate::{
 };
 
 #[derive(Clone)]
-pub struct TransactionServiceImpl {
+pub struct TransactionServiceImpl
+{
 	pub repository: Arc<dyn TransactionRepository>,
 	pub orchestrator_service: Arc<dyn OrchestratorService>,
 }
 
-impl TransactionServiceImpl {
-	pub fn new(repository: Arc<dyn TransactionRepository>, orchestrator_service: Arc<dyn OrchestratorService>) -> Self {
+impl TransactionServiceImpl
+{
+	pub fn new(repository: Arc<dyn TransactionRepository>, orchestrator_service: Arc<dyn OrchestratorService>) -> Self
+	{
 		TransactionServiceImpl { repository, orchestrator_service }
 	}
 }
 
 #[async_trait]
-impl TransactionService for TransactionServiceImpl {
-	async fn create(&self, transaction: CreateTransaction) -> Result<Transaction, CommonError> {
+impl TransactionService for TransactionServiceImpl
+{
+	async fn create(&self, transaction: CreateTransaction) -> Result<Transaction, CommonError>
+	{
 		let mut cloned_txn = transaction.clone();
 		cloned_txn.validate().map_err(|e| e.into())?; // validate the transaction
 		let txn_hash_result = self
@@ -42,19 +47,23 @@ impl TransactionService for TransactionServiceImpl {
 		self.repository.create(&mut cloned_txn).await.map_err(|e| -> CommonError { e.into() })
 	}
 
-	async fn read(&self, transaction_hash: &str) -> Result<Transaction, CommonError> {
+	async fn read(&self, transaction_hash: &str) -> Result<Transaction, CommonError>
+	{
 		self.repository.read(transaction_hash).await.map_err(|e| -> CommonError { e.into() })
 	}
 
-	async fn update(&self, _transaction_hash: &str, _txn: UpdateTransaction) -> Result<Transaction, CommonError> {
+	async fn update(&self, _transaction_hash: &str, _txn: UpdateTransaction) -> Result<Transaction, CommonError>
+	{
 		todo!()
 	}
 
-	async fn list(&self, params: TransactionQueryParams) -> Result<ResultPaging<Transaction>, CommonError> {
+	async fn list(&self, params: TransactionQueryParams) -> Result<ResultPaging<Transaction>, CommonError>
+	{
 		self.repository.list(params).await.map_err(|e| -> CommonError { e.into() })
 	}
 
-	async fn execute(&self, block_number: i32, transaction: &Transaction) -> Result<Transaction, CommonError> {
+	async fn execute(&self, block_number: i32, transaction: &Transaction) -> Result<Transaction, CommonError>
+	{
 		self
 			.orchestrator_service
 			.execute_transaction(block_number, transaction.clone())

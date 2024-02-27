@@ -20,7 +20,8 @@ use actix_web::{web, Result};
         (status = 429, description = "Too Many Requests"),
     )
 )]
-pub async fn create_block(block_service: web::Data<dyn BlockService>) -> Result<web::Json<BlockDTO>, ApiError> {
+pub async fn create_block(block_service: web::Data<dyn BlockService>) -> Result<web::Json<BlockDTO>, ApiError>
+{
 	let block = block_service.create().await?;
 	Ok(web::Json(block.into()))
 }
@@ -39,7 +40,8 @@ pub async fn create_block(block_service: web::Data<dyn BlockService>) -> Result<
 )]
 pub async fn list_blocks(
 	block_service: web::Data<dyn BlockService>, params: web::Query<BlockQueryParams>,
-) -> Result<web::Json<ResultPaging<BlockDTO>>, ApiError> {
+) -> Result<web::Json<ResultPaging<BlockDTO>>, ApiError>
+{
 	let selection = block_service.list(params.into_inner()).await?;
 	Ok(web::Json(selection.into()))
 }
@@ -59,7 +61,8 @@ pub async fn list_blocks(
         (status = 429, description = "Too Many Requests"),
     )
 )]
-pub async fn read_block(block_service: web::Data<dyn BlockService>, params: web::Path<i32>) -> Result<web::Json<BlockDTO>, ApiError> {
+pub async fn read_block(block_service: web::Data<dyn BlockService>, params: web::Path<i32>) -> Result<web::Json<BlockDTO>, ApiError>
+{
 	let block = block_service.read(params.into_inner()).await?;
 	Ok(web::Json(block.into()))
 }

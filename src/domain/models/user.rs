@@ -2,7 +2,8 @@ use chrono;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Serialize, Deserialize)]
-pub struct User {
+pub struct User
+{
 	pub user_id: i32,
 	pub email: String,
 	pub first_name: String,
@@ -12,23 +13,17 @@ pub struct User {
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
-pub struct CreateUser {
+pub struct CreateUser
+{
 	pub email: String,
 	pub first_name: String,
 	pub last_name: String,
-	pub uuid:Option<String>,
+	pub uuid: Option<String>,
 }
 
-// #[derive(Clone, Serialize, Deserialize, Debug)]
-//    pub struct UserWithUuid{
-// 	pub email: String,
-// 	pub first_name: String,
-// 	pub last_name: String,
-
-// }
-
 #[derive(Clone, Serialize, Deserialize, Debug)]
-pub struct UpdateUser {
+pub struct UpdateUser
+{
 	pub email: String,
 	pub first_name: Option<String>,
 	pub last_name: Option<String>,

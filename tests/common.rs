@@ -7,10 +7,10 @@ use ironclad::{
 	infrastructure::databases::pgsql::db_pool,
 	run,
 };
-use log::info;
 use uuid::Uuid;
 
-pub async fn spawn_app() -> String {
+pub async fn spawn_app() -> String
+{
 	dotenv().ok();
 	// let port=8000;
 	let listener = TcpListener::bind("127.0.0.1:0").expect("Should bind to a random port");
@@ -31,7 +31,8 @@ pub async fn spawn_app() -> String {
 	format!("http://127.0.0.1:{}", port)
 }
 
-fn database_url() -> String {
+fn database_url() -> String
+{
 	format!(
 		"postgresql://{}:{}@{}:5432/{}",
 		env::var(DB_USERNAME).expect("Username required"),
@@ -41,7 +42,8 @@ fn database_url() -> String {
 	)
 }
 
-fn database_url_with_custom_name(database_name: &str) -> String {
+fn database_url_with_custom_name(database_name: &str) -> String
+{
 	format!(
 		"postgresql://{}:{}@{}:5432/{}",
 		env::var(DB_USERNAME).expect("Username required"),

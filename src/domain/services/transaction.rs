@@ -7,7 +7,8 @@ use crate::domain::{
 };
 
 #[async_trait]
-pub trait TransactionService: Sync + Send {
+pub trait TransactionService: Sync + Send
+{
 	async fn create(&self, transaction: CreateTransaction) -> Result<Transaction, CommonError>;
 	async fn read(&self, transaction_hash: &str) -> Result<Transaction, CommonError>;
 	async fn update(&self, transaction_hash: &str, txn: UpdateTransaction) -> Result<Transaction, CommonError>;

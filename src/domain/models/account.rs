@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
-pub struct Account {
+pub struct Account
+{
 	pub account_id: i32,
 	pub account_number: String,
 	pub user_id: Option<i32>,
@@ -14,7 +15,8 @@ pub struct Account {
 }
 
 #[derive(Clone)]
-pub struct CreateAccount {
+pub struct CreateAccount
+{
 	pub account_number: String,
 	pub user_id: i32,
 	pub account_type_id: i32,
@@ -22,13 +24,15 @@ pub struct CreateAccount {
 }
 
 #[derive(Clone)]
-pub struct UpdateAccount {
+pub struct UpdateAccount
+{
 	pub balance: Option<f64>,
 	pub latest_transaction_hash: String,
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
-pub struct DeleteAccount {
+pub struct DeleteAccount
+{
 	pub account_num: String,
 	pub is_deleted: bool,
 }

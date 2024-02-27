@@ -6,7 +6,8 @@ use validator::Validate;
 use crate::domain::models::account::{Account, DeleteAccount};
 
 #[derive(Debug, Clone, Validate, Serialize, Deserialize, ToSchema)]
-pub struct AccountDTO {
+pub struct AccountDTO
+{
 	pub account_id: i32,
 	pub account_number: String,
 	pub user_id: Option<i32>,
@@ -18,8 +19,10 @@ pub struct AccountDTO {
 	pub is_deleted: bool,
 }
 
-impl From<Account> for AccountDTO {
-	fn from(account: Account) -> AccountDTO {
+impl From<Account> for AccountDTO
+{
+	fn from(account: Account) -> AccountDTO
+	{
 		AccountDTO {
 			account_id: account.account_id,
 			account_number: account.account_number,
@@ -35,13 +38,16 @@ impl From<Account> for AccountDTO {
 }
 
 #[derive(Debug, Clone, Validate, Serialize, Deserialize, ToSchema)]
-pub struct DeleteAccountDTO {
+pub struct DeleteAccountDTO
+{
 	pub account_num: String,
 	pub is_deleted: bool,
 }
 
-impl Into<DeleteAccount> for DeleteAccountDTO {
-	fn into(self) -> DeleteAccount {
+impl Into<DeleteAccount> for DeleteAccountDTO
+{
+	fn into(self) -> DeleteAccount
+	{
 		DeleteAccount { account_num: self.account_num, is_deleted: self.is_deleted }
 	}
 }

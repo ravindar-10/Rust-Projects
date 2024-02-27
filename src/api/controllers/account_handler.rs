@@ -20,7 +20,8 @@ use actix_web::{web, Result};
     )
 )]
 
-pub async fn read_account(account_service: web::Data<dyn AccountService>, acc_number: web::Path<String>) -> Result<web::Json<AccountDTO>, ApiError> {
+pub async fn read_account(account_service: web::Data<dyn AccountService>, acc_number: web::Path<String>) -> Result<web::Json<AccountDTO>, ApiError>
+{
 	let account = account_service.read(&acc_number.into_inner()).await?;
 	Ok(web::Json(account.into()))
 }
@@ -44,7 +45,8 @@ pub async fn read_account(account_service: web::Data<dyn AccountService>, acc_nu
 
 pub async fn delete_account(
 	account_service: web::Data<dyn AccountService>, acc_number: web::Path<String>, post_data: web::Json<DeleteAccountDTO>,
-) -> Result<String, ApiError> {
+) -> Result<String, ApiError>
+{
 	let account = account_service.delete(&acc_number.into_inner(), post_data.into_inner().into()).await?;
 	Ok(account.into())
 }

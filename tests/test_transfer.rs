@@ -1,13 +1,16 @@
 mod common;
 use actix_web::web;
-use ironclad::api::dto::transaction::{self, CreateTransactionDTO};
-use ironclad::api::dto::user::CreateUserDTO;
-use ironclad::domain::models::account::Account;
-use ironclad::domain::models::transaction::deposit::DepositTransaction;
-use ironclad::domain::models::transaction::transfer::TransferTransaction;
+use ironclad::{
+	api::dto::{transaction::CreateTransactionDTO, user::CreateUserDTO},
+	domain::models::{
+		account::Account,
+		transaction::{deposit::DepositTransaction, transfer::TransferTransaction},
+	},
+};
 
 #[tokio::test]
-async fn user_handler_works() {
+async fn user_handler_works()
+{
 	let address = common::spawn_app().await;
 	let client = reqwest::Client::new();
 
@@ -47,7 +50,8 @@ async fn user_handler_works() {
 	//create transaction to deposit amount in sender's account
 	let deposit_data = serde_json::to_value(DepositTransaction { to_account_number: "IRONCLAD0000000002".to_string(), amount: 1000.0 }).unwrap();
 
-	let transaction_data = web::Json(CreateTransactionDTO { user_id: 2, transaction_type_str: "Deposit".to_string(), transaction_data: deposit_data });
+	let transaction_data =
+		web::Json(CreateTransactionDTO { user_id: 2, transaction_type_str: "Deposit".to_string(), transaction_data: deposit_data, uuid: None });
 
 	let response = client
 		.post(&format!("{}/api/transactions", &address))
@@ -67,7 +71,12 @@ async fn user_handler_works() {
 	})
 	.unwrap();
 
-	let post_data = web::Json(CreateTransactionDTO { user_id: 1, transaction_type_str: "Transfer".to_string(), transaction_data: transfer_data });
+	let post_data = web::Json(CreateTransactionDTO {
+		user_id: 1,
+		transaction_type_str: "Transfer".to_string(),
+		transaction_data: transfer_data,
+		uuid: None,
+	});
 
 	let response = client
 		.post(&format!("{}/api/transactions", &address))

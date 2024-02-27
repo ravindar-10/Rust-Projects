@@ -6,7 +6,8 @@ use diesel::{AsChangeset, Insertable, Queryable};
 use serde_json::Value;
 
 #[derive(Queryable, Debug)]
-pub struct TransactionDiesel {
+pub struct TransactionDiesel
+{
 	pub transaction_id: i32,
 	pub user_id: Option<i32>,
 	pub transaction_type_id: Option<i32>,
@@ -15,10 +16,13 @@ pub struct TransactionDiesel {
 	pub transaction_date: chrono::NaiveDateTime,
 	pub block_number: Option<i32>,
 	pub status: String,
+	pub uuid: Option<String>,
 }
 
-impl From<Transaction> for TransactionDiesel {
-	fn from(transaction: Transaction) -> Self {
+impl From<Transaction> for TransactionDiesel
+{
+	fn from(transaction: Transaction) -> Self
+	{
 		TransactionDiesel {
 			transaction_id: transaction.transaction_id,
 			user_id: transaction.user_id,
@@ -28,12 +32,15 @@ impl From<Transaction> for TransactionDiesel {
 			transaction_date: transaction.transaction_date,
 			block_number: transaction.block_number,
 			status: transaction.status.to_string(),
+			uuid: transaction.uuid,
 		}
 	}
 }
 
-impl Into<Transaction> for TransactionDiesel {
-	fn into(self) -> Transaction {
+impl Into<Transaction> for TransactionDiesel
+{
+	fn into(self) -> Transaction
+	{
 		Transaction {
 			transaction_id: self.transaction_id,
 			user_id: self.user_id,
@@ -43,50 +50,62 @@ impl Into<Transaction> for TransactionDiesel {
 			transaction_date: self.transaction_date,
 			block_number: self.block_number,
 			status: self.status.parse::<TransactionStatus>().unwrap_or(TransactionStatus::PENDING),
+			uuid: self.uuid,
 		}
 	}
 }
 
 #[derive(Insertable)]
 #[diesel(table_name = transactions)]
-pub struct CreateTransactionDiesel {
+pub struct CreateTransactionDiesel
+{
 	pub user_id: i32,
 	pub transaction_type_id: i32,
 	pub transaction_data: Value,
 	pub transaction_hash: String,
+	pub uuid: Option<String>,
 }
 
-impl From<CreateTransaction> for CreateTransactionDiesel {
-	fn from(transaction: CreateTransaction) -> Self {
+impl From<CreateTransaction> for CreateTransactionDiesel
+{
+	fn from(transaction: CreateTransaction) -> Self
+	{
 		CreateTransactionDiesel {
 			user_id: transaction.user_id,
 			transaction_type_id: transaction.transaction_type as i32,
 			transaction_data: transaction.transaction_data,
 			transaction_hash: transaction.transaction_hash,
+			uuid: transaction.uuid,
 		}
 	}
 }
 
-impl Into<CreateTransaction> for CreateTransactionDiesel {
-	fn into(self) -> CreateTransaction {
+impl Into<CreateTransaction> for CreateTransactionDiesel
+{
+	fn into(self) -> CreateTransaction
+	{
 		CreateTransaction {
 			user_id: self.user_id,
 			transaction_type: TransactionType::from(self.transaction_type_id),
 			transaction_data: self.transaction_data,
 			transaction_hash: self.transaction_hash,
+			uuid: self.uuid,
 		}
 	}
 }
 
 #[derive(AsChangeset)]
 #[diesel(table_name = transactions)]
-pub struct UpdateTransactionDiesel {
+pub struct UpdateTransactionDiesel
+{
 	pub block_number: i32,
 	pub status: String,
 }
 
-impl From<UpdateTransaction> for UpdateTransactionDiesel {
-	fn from(transaction: UpdateTransaction) -> Self {
+impl From<UpdateTransaction> for UpdateTransactionDiesel
+{
+	fn from(transaction: UpdateTransaction) -> Self
+	{
 		UpdateTransactionDiesel { block_number: transaction.block_number, status: transaction.status.to_string() }
 	}
 }

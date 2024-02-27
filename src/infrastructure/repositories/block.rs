@@ -18,19 +18,24 @@ use crate::{
 	},
 };
 
-pub struct BlockDieselRepository {
+pub struct BlockDieselRepository
+{
 	pub pool: Arc<DBConn>,
 }
 
-impl BlockDieselRepository {
-	pub fn new(db: Arc<DBConn>) -> Self {
+impl BlockDieselRepository
+{
+	pub fn new(db: Arc<DBConn>) -> Self
+	{
 		BlockDieselRepository { pool: db }
 	}
 }
 
 #[async_trait]
-impl BlockRepository for BlockDieselRepository {
-	async fn create(&self, new_block: &CreateBlock) -> RepositoryResult<Block> {
+impl BlockRepository for BlockDieselRepository
+{
+	async fn create(&self, new_block: &CreateBlock) -> RepositoryResult<Block>
+	{
 		use crate::infrastructure::schema::blocks::dsl::blocks;
 		let new_block_diesel: CreateBlockDiesel = CreateBlockDiesel::from(new_block.clone());
 		let mut conn = self.pool.get().unwrap();
@@ -40,7 +45,8 @@ impl BlockRepository for BlockDieselRepository {
 			.map_err(|v| DieselRepositoryError::from(v).into_inner())?;
 		Ok(result.into())
 	}
-	async fn read(&self, block_nmb: i32) -> RepositoryResult<Block> {
+	async fn read(&self, block_nmb: i32) -> RepositoryResult<Block>
+	{
 		use crate::infrastructure::schema::blocks::dsl::{block_number, blocks};
 		let mut conn = self.pool.get().unwrap();
 		blocks
@@ -50,7 +56,8 @@ impl BlockRepository for BlockDieselRepository {
 			.map(|v| -> Block { v.into() })
 	}
 
-	async fn delete(&self, block_nmb: i32) -> RepositoryResult<()> {
+	async fn delete(&self, block_nmb: i32) -> RepositoryResult<()>
+	{
 		use crate::infrastructure::schema::blocks::dsl::{block_number, blocks};
 		let mut conn = self.pool.get().unwrap();
 		diesel::delete(blocks)
@@ -60,7 +67,8 @@ impl BlockRepository for BlockDieselRepository {
 		Ok(())
 	}
 
-	async fn list(&self, params: BlockQueryParams) -> RepositoryResult<ResultPaging<Block>> {
+	async fn list(&self, params: BlockQueryParams) -> RepositoryResult<ResultPaging<Block>>
+	{
 		use crate::infrastructure::schema::blocks::dsl::{blocks, created_at};
 		let mut conn = self.pool.get().unwrap();
 		let builder = blocks.limit(params.limit()).offset(params.offset()).order_by(created_at.desc());
