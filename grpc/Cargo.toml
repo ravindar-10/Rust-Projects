@@ -1,0 +1,20 @@
+[package]
+name = "grpc"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name="greeter-server"
+path="src/server.rs"
+
+[[bin]]
+name="greeter-client"
+path="src/client.rs"
+
+[dependencies]
+tonic = "0.3"
+prost = { version = "0.6", features = ["no-recursion-limit"] }
+tokio = { version = "0.2", features = ["macros"] }
+
+[build-dependencies]
+tonic-build = "0.3"
