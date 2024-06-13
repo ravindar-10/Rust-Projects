@@ -1,0 +1,10 @@
+[package]
+name = "helper_lib"
+version = "0.1.0"
+edition = "2021"
+authors= ["ravindar-02<ravindar.rathaur@systango.com>"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+dotenv = "0.15.0"
