@@ -1,0 +1,16 @@
+[package]
+name = "scheduler"
+version = "0.1.0"
+edition = "2021"
+authors= ["ravindar-02<ravindar.rathaur@systango.com>"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+chrono = "0.4.37"
+clokwerk = "0.4.0"
+dotenv = "0.15.0"
+infobip_sdk = "0.5.2"
+job_scheduler = "1.2.1"
+reqwest = "0.12.3"
+tokio = "1.37.0"
