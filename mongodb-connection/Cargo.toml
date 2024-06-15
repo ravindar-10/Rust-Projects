@@ -1,0 +1,13 @@
+[package]
+name = "mongodb-connection"
+version = "0.1.0"
+edition = "2021"
+authors= ["ravindar-02<ravindar.rathaur@systango.com>"]
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+mongodb = "2.8.2"
+tokio = "1.37.0"
+helper_lib={ path ="/home/ravindar/Rust-Projects/helper_lib"}
+dotenv = "0.15.0"
+futures-util = "0.3.30"
