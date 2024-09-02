@@ -1,0 +1,19 @@
+[package]
+name = "lsm-nice-ebpf"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+aya-ebpf = { git = "http://github.com/aya-rs/aya" }
+aya-log-ebpf = { git = "https://github.com/aya-rs/aya" }
+lsm-nice-common = { path = "../lsm-nice-common" }
+
+[[bin]]
+name = "lsm-nice"
+path = "src/main.rs"
+
+[profile.release]
+panic = "abort"
+
+[workspace]
+members = []

@@ -1,0 +1,4 @@
+[workspace]
+members = ["xdp-hello", "xdp-hello-common", "xtask"]
+[build]
+target = "bpfel-unknown-none" 
