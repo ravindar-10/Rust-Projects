@@ -1,4 +1,4 @@
-*/target/
+**/target/
 */*/target/
 */*/*/target/
 */.vscode/*
@@ -6,3 +6,6 @@
 */*/*.lock
 */*/*.lock
 */*/test-bed
+*.bash_profile
+*.bash_history
+*.bash_logout
